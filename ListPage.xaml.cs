@@ -1,12 +1,24 @@
 using Gandi_Ariana_Lab7.Models;
+using Gandi_Ariana_Lab7;
+
 namespace Gandi_Ariana_Lab7;
 
 public partial class ListPage : ContentPage
 {
-	public ListPage()
-	{
-		InitializeComponent();
-	}
+    public ListPage()
+    {
+        InitializeComponent();
+    }
+
+    protected override async void OnAppearing()
+    {
+        base.OnAppearing();
+        var shopl = (ShopList)BindingContext;
+
+        listView.ItemsSource = await App.Database.GetListProductsAsync(shopl.ID);
+    }
+    
+
     async void OnSaveButtonClicked(object sender, EventArgs e)
     {
         var slist = (ShopList)BindingContext;
@@ -19,6 +31,16 @@ public partial class ListPage : ContentPage
         var slist = (ShopList)BindingContext;
         await App.Database.DeleteShopListAsync(slist);
         await Navigation.PopAsync();
+    }
+   
+    async void OnChooseButtonClicked(object sender, EventArgs e)
+    {
+        await Navigation.PushAsync(new ProductPage((ShopList)
+       this.BindingContext)
+        {
+            BindingContext = new Product()
+        });
+
     }
 
 }
